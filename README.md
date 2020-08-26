@@ -1,9 +1,6 @@
 # sparkify
 Data Engineering project for mocked up music streaming service
 
-# sparkify
-## Data Engineering project for mocked up music streaming service
-
 This a Udacity project to create a database schema and an ETL pipline for mocked out data for a music streaming service.  
 The data for the project comes from two different sources:
 1) data/song contains jason files with song data
