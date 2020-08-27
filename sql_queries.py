@@ -11,56 +11,59 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays(
         songplay_id serial primary key,
-        start_time bigint,
-        user_id int,
-        level text, 
+        start_time bigint NOT NULL,
+        user_id int NOT NULL,
+        level text NOT NULL, 
         song_id text, 
         artist_id text,
-        session_id int,
-        location text,
-        user_agent text
+        session_id int NOT NULL,
+        location text NOT NULL,
+        user_agent text NOT NULL,
+        unique(start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
     );
 """)
 
 user_table_create = ("""
     CREATE TABLE  IF NOT EXISTS users(
-        user_id int,
-        first_name text, 
-        last_name text, 
-        gender text, 
-        level text
+        user_id int primary key,
+        first_name text NOT NULL, 
+        last_name text NOT NULL, 
+        gender text NOT NULL, 
+        level text NOT NULL
     );
 """)
 
 song_table_create = ("""
     CREATE TABLE  IF NOT EXISTS songs(
-        song_id text,
-        title text, 
-        artist_id text,
-        year int, 
-        duration real
+        song_id text primary key,
+        title text NOT NULL, 
+        artist_id text NOT NULL,
+        year int NOT NULL, 
+        duration real NOT NULL,
+        unique(song_id, title, artist_id, year, duration)
     );
 """)
 
 artist_table_create = ("""
     CREATE TABLE  IF NOT EXISTS artists(
-        artist_id text,
-        name text, 
-        location text, 
+        artist_id text primary key,
+        name text NOT NULL, 
+        location text NOT NULL, 
         latitude real,
-        longitude real
+        longitude real,
+        unique(artist_id, name, location, latitude, longitude)
     );
 """)
 
 time_table_create = ("""
     CREATE TABLE  IF NOT EXISTS time(
-    start_time bigint,
-    hour int, 
-    day int, 
-    week int, 
-    month int, 
-    year int, 
-    weekday int
+    start_time bigint NOT NULL,
+    hour int NOT NULL, 
+    day int NOT NULL, 
+    week int NOT NULL, 
+    month int NOT NULL, 
+    year int NOT NULL, 
+    weekday int NOT NULL
     );
 """)
 
@@ -70,19 +73,23 @@ songplay_table_insert = ("""
     INSERT INTO 
         songplays(start_time, user_id, level, song_id, artist_id, session_id, location, user_agent) 
     VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT DO NOTHING;
 """)
 
 # userId	firstName	lastName	gender	level
 user_table_insert = ("""
     INSERT INTO users(user_id,first_name, last_name, gender, level) VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT DO NOTHING;
 """)
 
 song_table_insert = ("""
     INSERT INTO songs(song_id, title, artist_id, year, duration) VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT DO NOTHING;
 """)
 
 artist_table_insert = ("""
     INSERT INTO artists(artist_id,name, location, latitude,longitude) VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT DO NOTHING;
 """)
 
 #timestamp	hour	day	week	month	year	weekday
