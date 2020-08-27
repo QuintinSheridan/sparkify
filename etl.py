@@ -7,6 +7,13 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """Function to process a song file and enter the data
+    Args:
+         cur (cursor): cursor
+         file_path (str): relative path to song file
+    Returns:
+        none
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
 
@@ -16,12 +23,21 @@ def process_song_file(cur, filepath):
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 
-                      'artist_longitude']].loc[0].astype(str).values.tolist()
+    artist_data = df[['artist_id', 'artist_name', 'artist_location', 
+                      'artist_latitude', 'artist_longitude']
+                    ].loc[0].astype(str).values.tolist()
+    
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
+    """Function to process a log file and enter the data
+    Args:
+         cur (cursor): cursor
+         file_path (str): relative path to song file
+    Returns:
+        none
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -33,10 +49,12 @@ def process_log_file(cur, filepath):
     
     # insert time data records
     time_data = np.array([t.values, t.dt.hour.values, t.dt.day.values, 
-                      t.dt.week.values, t.dt.month.values, t.dt.year.values, 
-                      t.dt.weekday.values])
-    column_labels = ['timestamp', 'hour', 'day', 'week', 'month', 'year', 'weekday']
-    time_df =  pd.DataFrame(columns=column_labels, data=time_data.transpose())
+                      t.dt.week.values, t.dt.month.values, 
+                      t.dt.year.values, t.dt.weekday.values])
+    column_labels = ['timestamp', 'hour', 'day', 'week', 
+                     'month', 'year', 'weekday']
+    time_df =  pd.DataFrame(columns=column_labels, 
+                            data=time_data.transpose())
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
@@ -69,6 +87,15 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """Function to process all data files
+    Args:
+         cur (cursor): cursor
+         conn (connection): psycopg2 connection
+         file_path (str): relative path to song file
+         func (function): function for data processing
+    Returns:
+        none
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -88,7 +115,7 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+    conn = psycopg2.connect('host=127.0.0.1 dbname=sparkifydb user=student password=student')
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
